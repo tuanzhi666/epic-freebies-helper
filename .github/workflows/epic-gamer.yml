@@ -56,7 +56,7 @@ jobs:
           # 👇 核心修正：强制使用 Flash 模型，避免 2.5 Pro 额度耗尽
           LLM_PROVIDER: "gemini"
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI_MODEL: "gemini-1.5-flash" # 这里是关键！不用 2.5 了
+          GEMINI_MODEL: "gemini-1.5-flash"
           
           # 👇 关闭不必要的 AI 推理，节省资源
           DISABLE_LLM: "true"
@@ -81,13 +81,14 @@ jobs:
         run: |
           echo "❌ 账号 ${{ matrix.account }} 领取失败！"
 
+      # 👇 关键修复：修正 upload-artifact 的路径格式
       - name: Upload artifacts
-  uses: actions/upload-artifact@v4  <-- 补全为 actions/upload-artifact
-  with:
-    name: epic-ai-logs-${{ github.run_id }}
-    path: |
-      app/volumes/logs/
-      app/volumes/screenshots/
-      app/volumes/runtime/
-    retention-days: 7
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: epic-ai-logs-${{ github.run_id }}-account-${{ matrix.account }}
+          path: |
+            app/volumes/logs/
+            app/volumes/screenshots/
+            app/volumes/runtime/
           retention-days: 7
