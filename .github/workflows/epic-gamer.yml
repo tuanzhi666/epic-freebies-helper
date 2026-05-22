@@ -82,12 +82,12 @@ jobs:
           echo "❌ 账号 ${{ matrix.account }} 领取失败！"
 
       - name: Upload artifacts
-        if: always()
-        uses: upload-artifact@v4
-        with:
-          name: epic-ai-logs-${{ github.run_id }}-account-${{ matrix.account }}
-          path: |
-            app/volumes/logs/
-            app/volumes/screenshots/
-            app/volumes/runtime/
+  uses: actions/upload-artifact@v4  <-- 补全为 actions/upload-artifact
+  with:
+    name: epic-ai-logs-${{ github.run_id }}
+    path: |
+      app/volumes/logs/
+      app/volumes/screenshots/
+      app/volumes/runtime/
+    retention-days: 7
           retention-days: 7
