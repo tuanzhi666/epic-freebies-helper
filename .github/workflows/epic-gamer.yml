@@ -1,9 +1,8 @@
 name: Epic Awesome Gamer (AI Enhanced)
 
 on:
-  workflow_dispatch: # 手动触发
+  workflow_dispatch:
   schedule:
-    # 每周四 UTC 15:20 运行一次（北京时间周四 23:20）
     - cron: '20 15 * * 4'
 
 env:
@@ -12,16 +11,14 @@ env:
 jobs:
   epic-gamer:
     runs-on: ubuntu-latest
-    timeout-minutes: 60 # 延长超时时间
+    timeout-minutes: 60
     strategy:
       matrix:
-        account: [1]  # 测试没问题后，改成 [1, 2, 3]
+        account: [1]
     
-    # 默认不在主仓库自身执行定时任务；Fork 后的仓库会正常运行。
     if: github.repository != 'Ronchy2000/epic-freebies-helper'
 
     steps:
-      # 👇 关键修复：禁用缓存，解决 Cache service 400 错误
       - name: Disable Actions cache
         run: echo "ACTIONS_CACHE_VERSION=2" >> $GITHUB_ENV
 
@@ -44,8 +41,8 @@ jobs:
       - name: Install dependencies
         run: |
           uv sync
-          # 👇 关键修复：强制升级 Gemini 适配器，解决旧版本 API 路径导致的 404 错误
-          uv pip install --upgrade hcaptcha-challenger[gemini]
+          # 👇 关键修复：强制更新官方 AI 库和适配器
+          uv pip install --upgrade google-generativeai hcaptcha-challenger[gemini]
 
       - name: Install Playwright Firefox
         run: uv run playwright install firefox
@@ -56,14 +53,12 @@ jobs:
           EPIC_PASSWORD: ${{ secrets[format('EPIC_PASSWORD_{0}', matrix.account)] }}
           SCT_KEY: ${{ secrets[format('SCT_KEY_{0}', matrix.account)] }}
           
-          # 👇 核心配置：使用标准 Gemini 模型名称
           LLM_PROVIDER: "gemini"
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI_MODEL: "gemini-1.5-flash"
+          # 👇 尝试使用 1.0 版本作为保底，如果 1.5 依然 404，这通常能跑通
+          GEMINI_MODEL: "gemini-1.0-pro"
           
-          # 👇 必须设置为 false，否则上面的 Gemini 配置不会被调用
           DISABLE_LLM: "false"
-          
           BROWSER_BACKEND: auto
           ENABLE_APSCHEDULER: false
           MPLBACKEND: Agg
@@ -76,15 +71,12 @@ jobs:
 
       - name: Success notification
         if: success()
-        run: |
-          echo "✅ 账号 ${{ matrix.account }} 领取成功！"
+        run: echo "✅ 账号 ${{ matrix.account }} 领取成功！"
 
       - name: Failure notification
         if: failure()
-        run: |
-          echo "❌ 账号 ${{ matrix.account }} 领取失败！"
+        run: echo "❌ 账号 ${{ matrix.account }} 领取失败！"
 
-      # 👇 关键修复：修正 upload-artifact 的路径格式
       - name: Upload artifacts
         if: always()
         uses: actions/upload-artifact@v4
