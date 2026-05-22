@@ -26,7 +26,7 @@ jobs:
         run: echo "ACTIONS_CACHE_VERSION=2" >> $GITHUB_ENV
 
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Install uv
         uses: astral-sh/setup-uv@v3
@@ -53,13 +53,13 @@ jobs:
           EPIC_PASSWORD: ${{ secrets[format('EPIC_PASSWORD_{0}', matrix.account)] }}
           SCT_KEY: ${{ secrets[format('SCT_KEY_{0}', matrix.account)] }}
           
-          # 👇 核心修正：强制使用 Flash 模型，避免 2.5 Pro 额度耗尽
+          # 👇 核心修正：配置 Gemini 模型
           LLM_PROVIDER: "gemini"
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_MODEL: "gemini-1.5-flash-latest"
           
-          # 👇 关闭不必要的 AI 推理，节省资源
-          DISABLE_LLM: "true"
+          # 👇 必须设置为 false，否则上面的 Gemini 配置不会被调用
+          DISABLE_LLM: "false"
           
           BROWSER_BACKEND: auto
           ENABLE_APSCHEDULER: false
