@@ -1,8 +1,9 @@
 name: Epic Awesome Gamer (AI Enhanced)
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: # 手动触发
   schedule:
+    # 每周四 UTC 15:20 运行一次（北京时间周四 23:20）
     - cron: '20 15 * * 4'
 
 env:
@@ -11,14 +12,19 @@ env:
 jobs:
   epic-gamer:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60 # 延长超时时间，防止 AI 识别太慢
     strategy:
       matrix:
         account: [1]  # 测试没问题后，改成 [1, 2, 3]
     
+    # 默认不在主仓库自身执行定时任务；Fork 后的仓库会正常运行。
     if: github.repository != 'Ronchy2000/epic-freebies-helper'
 
     steps:
+      # 👇 关键修复：禁用缓存，解决 Cache service 400 错误
+      - name: Disable Actions cache
+        run: echo "ACTIONS_CACHE_VERSION=2" >> $GITHUB_ENV
+
       - name: Checkout repository
         uses: actions/checkout@v6
 
@@ -45,7 +51,8 @@ jobs:
         env:
           EPIC_EMAIL: ${{ secrets[format('EPIC_EMAIL_{0}', matrix.account)] }}
           EPIC_PASSWORD: ${{ secrets[format('EPIC_PASSWORD_{0}', matrix.account)] }}
-          SCT_KEY: ${{ secrets[format('NOTIFY_KEY_{0}', matrix.account)] }}
+          # 使用 SCT_KEY 变量名，读取你设置的 SCT_KEY_1
+          SCT_KEY: ${{ secrets[format('SCT_KEY_{0}', matrix.account)] }}
           
           LLM_PROVIDER: "longcat"
           LONG_API_KEY: ${{ secrets.LONG_API_KEY }}
