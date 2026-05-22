@@ -54,14 +54,11 @@ jobs:
           # 使用 SCT_KEY 变量名，读取你设置的 SCT_KEY_1
           SCT_KEY: ${{ secrets[format('SCT_KEY_{0}', matrix.account)] }}
           
-          LLM_PROVIDER: "longcat"
-          LONG_API_KEY: ${{ secrets.LONG_API_KEY }}
-          LONG_BASE_URL: ${{ secrets.LONG_BASE_URL }}
-          LONG_MODEL: "longcat/longcat-thinking"
-          CHALLENGE_CLASSIFIER_MODEL: "longcat/longcat-thinking"
-          IMAGE_CLASSIFIER_MODEL: "longcat/longcat-thinking"
-          SPATIAL_POINT_REASONER_MODEL: "longcat/longcat-thinking"
-          SPATIAL_PATH_REASONER_MODEL: "longcat/longcat-thinking"
+          # 👇 核心修正：切换为 Google Gemini 模型
+          LLM_PROVIDER: "gemini"
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          
+          # 👇 以下是原有的固定配置，保持不变
           BROWSER_BACKEND: auto
           ENABLE_APSCHEDULER: false
           MPLBACKEND: Agg
