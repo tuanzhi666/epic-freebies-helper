@@ -42,7 +42,10 @@ jobs:
           sudo apt-get install -y xvfb libxml2-dev libxslt-dev
 
       - name: Install dependencies
-        run: uv sync
+        run: |
+          uv sync
+          # 👇 关键修复：强制升级 Gemini 适配器，解决旧版本 API 路径导致的 404 错误
+          uv pip install --upgrade hcaptcha-challenger[gemini]
 
       - name: Install Playwright Firefox
         run: uv run playwright install firefox
@@ -53,10 +56,10 @@ jobs:
           EPIC_PASSWORD: ${{ secrets[format('EPIC_PASSWORD_{0}', matrix.account)] }}
           SCT_KEY: ${{ secrets[format('SCT_KEY_{0}', matrix.account)] }}
           
-          # 👇 核心修正：配置 Gemini 模型 (修复 404 错误)
+          # 👇 核心配置：使用标准 Gemini 模型名称
           LLM_PROVIDER: "gemini"
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI_MODEL: "gemini-1.5-flash-001"
+          GEMINI_MODEL: "gemini-1.5-flash"
           
           # 👇 必须设置为 false，否则上面的 Gemini 配置不会被调用
           DISABLE_LLM: "false"
