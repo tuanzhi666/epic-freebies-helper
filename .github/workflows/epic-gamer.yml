@@ -53,10 +53,10 @@ jobs:
           EPIC_PASSWORD: ${{ secrets[format('EPIC_PASSWORD_{0}', matrix.account)] }}
           SCT_KEY: ${{ secrets[format('SCT_KEY_{0}', matrix.account)] }}
           
-          # 👇 核心修正：配置 Gemini 模型
+          # 👇 核心修正：配置 Gemini 模型 (修复 404 错误)
           LLM_PROVIDER: "gemini"
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI_MODEL: "gemini-1.5-flash-latest"
+          GEMINI_MODEL: "gemini-1.5-flash"
           
           # 👇 必须设置为 false，否则上面的 Gemini 配置不会被调用
           DISABLE_LLM: "false"
