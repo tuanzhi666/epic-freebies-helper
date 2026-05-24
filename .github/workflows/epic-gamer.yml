@@ -41,8 +41,8 @@ jobs:
       - name: Install dependencies
         run: |
           uv sync
-          # 👇 关键修复：强制更新官方 AI 库和适配器
-          uv pip install --upgrade google-generativeai hcaptcha-challenger[gemini]
+          # 👇 确保 hcaptcha-challenger 及其依赖（包括 zhipuai）已安装
+          uv pip install --upgrade hcaptcha-challenger
 
       - name: Install Playwright Firefox
         run: uv run playwright install firefox
@@ -53,9 +53,10 @@ jobs:
           EPIC_PASSWORD: ${{ secrets[format('EPIC_PASSWORD_{0}', matrix.account)] }}
           SCT_KEY: ${{ secrets[format('SCT_KEY_{0}', matrix.account)] }}
           
-          LLM_PROVIDER: "gemini"
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          # 👇 尝试使用 1.0 版本作为保底，如果 1.5 依然 404，这通常能跑通
+          # 👇 核心修改：切换为智谱 GLM 配置
+          LLM_PROVIDER: "glm"
+          GLM_API_KEY: ${{ secrets.GLM_API_KEY }}
+          GLM_MODEL: "glm-4.1v-thinking-flash"
           
           DISABLE_LLM: "false"
           BROWSER_BACKEND: auto
@@ -78,7 +79,7 @@ jobs:
 
       - name: Upload artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: upload-artifact@v4
         with:
           name: epic-ai-logs-${{ github.run_id }}-account-${{ matrix.account }}
           path: |
