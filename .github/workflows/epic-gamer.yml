@@ -56,7 +56,7 @@ jobs:
           # ================= 核心修改区域 =================
           LLM_PROVIDER: "glm"
           GLM_API_KEY: ${{ secrets.GLM_API_KEY }}
-          GLM_MODEL: "glm-4.6v-flash"
+          GLM_MODEL: "glm-4.1v-thinking-flashx"
           # ================================================
 
           DISABLE_LLM: "false"
