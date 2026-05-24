@@ -56,7 +56,6 @@ jobs:
           LLM_PROVIDER: "gemini"
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           # 👇 尝试使用 1.0 版本作为保底，如果 1.5 依然 404，这通常能跑通
-          GEMINI_MODEL: "gemini-1.0-pro"
           
           DISABLE_LLM: "false"
           BROWSER_BACKEND: auto
