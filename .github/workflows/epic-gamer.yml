@@ -41,7 +41,7 @@ jobs:
       - name: Install dependencies
         run: |
           uv sync
-          # 👇 确保 hcaptcha-challenger 及其依赖（包括 zhipuai）已安装
+          # 确保 hcaptcha-challenger 及其依赖已安装
           uv pip install --upgrade hcaptcha-challenger
 
       - name: Install Playwright Firefox
@@ -53,11 +53,12 @@ jobs:
           EPIC_PASSWORD: ${{ secrets[format('EPIC_PASSWORD_{0}', matrix.account)] }}
           SCT_KEY: ${{ secrets[format('SCT_KEY_{0}', matrix.account)] }}
           
-          # 👇 核心修改：切换为智谱 GLM 配置
+          # ================= 核心修改区域 =================
           LLM_PROVIDER: "glm"
           GLM_API_KEY: ${{ secrets.GLM_API_KEY }}
           GLM_MODEL: "glm-4.1v-thinking-flash"
-          
+          # ================================================
+
           DISABLE_LLM: "false"
           BROWSER_BACKEND: auto
           ENABLE_APSCHEDULER: false
@@ -79,7 +80,7 @@ jobs:
 
       - name: Upload artifacts
         if: always()
-        uses: upload-artifact@v4
+        uses: actions/upload-artifact@v4
         with:
           name: epic-ai-logs-${{ github.run_id }}-account-${{ matrix.account }}
           path: |
